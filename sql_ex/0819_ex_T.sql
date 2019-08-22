@@ -66,7 +66,7 @@ order by to_char(hire_date,'MM');
 select e.first_name, e.hire_date, m.employee_id, m.first_name
 from employees e left outer join employees m
 on e.manager_id = m.employee_id
-where to_char(e.hire_date,'yy') = '08'
+where to_char(e.hire_date,'yy') = '08';
 
 8. ‘Sales’부서에 속한 직원의 이름(first_name), 
 급여(salary), 부서이름(department_name)을 조회하시오. 
