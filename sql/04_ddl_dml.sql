@@ -175,6 +175,8 @@ create table book(
 ); 
 --제약조건 추가
 alter table book add CONSTRAINT book_bookno_pk primary key(bookno); 
+--복합키(1개 제약조건에 2개키)
+alter table book add CONSTRAINT book_bookno_pk primary key(bookno,author); 
 --제약조건 확인
 insert into book (bookno,title,author,price,pubdate)
            values(1,'db','홍길동',900,sysdate);  
@@ -232,6 +234,28 @@ insert into emp2 (empno,ename,hiredate,sal,deptno,mgr)
             values(8888,'이길동',sysdate,0,null,10);	
 --위에 mgr이 제약조건에 처리가 안되어야하므로 다시 제약조건을 만들어서 처리해주기(self join), FK는 무조건 PK참조
 alter table emp2 add foreign key(mgr) references emp2; 
+--------------------------------------------------------------------------------------------------
+--0821
+alter table emp2 add CONSTRAINT emp2_pk primary key(empno); 
+alter table emp2 add CONSTRAINT emp2_fk_mgr foreign key(mgr) references emp2; 
+alter table emp2 add CONSTRAINT emp2_fk1 foreign key(deptno) references dept2; 
+delete from dept2 where deptno=20; --불가능
+
+
+alter table emp2 drop CONSTRAINT emp2_fk1; 
+
+alter table emp2 add CONSTRAINT emp2_fk1 foreign key(deptno) references dept2 ON DELETE SET NULL; --삭제 대신에 emp2테이블의 deptno=20번을 null로 바꿔준다.
+delete from dept2 where deptno=20; --가능(deptno=20인 것들이 null로 바뀌어있음)
+select * from emp2;
+
+--연결삭제(원래 제약조건을 삭제 후(ROLLBACK으로는 안지워 지므로 drop으로 삭제) 새로 제약조건을 만든 다음에 참조하는 것을 같이 삭제, deptno=20 삭제로 확인 )
+alter table emp2 drop CONSTRAINT emp2_fk1;
+alter table emp2 add CONSTRAINT emp2_fk1 foreign key(deptno) references dept2 ON DELETE cascade;
+delete from dept2 where deptno=20;
+
+
+
+--------------------------------------------------------------------------------------------------
 
 --제약조건으로 먼저 지울 수 없다.
 drop table dept2;
@@ -244,39 +268,6 @@ select * from dept;
 
 select * from emp;                
            
-           
-           
-           
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ############################################################################################
 트랜잭션
